@@ -39,7 +39,7 @@ async fn color(mut body: Payload, request: HttpRequest) -> Result<HttpResponse, 
     };
     let image = image::load_from_memory_with_format(&bytes, format)?;
     let img =
-        color_thief::get_palette(&image.as_bytes(), color_thief::ColorFormat::Rgb, 10, 2).unwrap();
+        color_thief::get_palette(image.as_bytes(), color_thief::ColorFormat::Rgb, 10, 2).unwrap();
     let colors: Vec<u32> = img
         .iter()
         .map(|rgb| {
@@ -50,8 +50,7 @@ async fn color(mut body: Payload, request: HttpRequest) -> Result<HttpResponse, 
         })
         .collect();
     let json = json!({ "colors": colors });
-    let response = serde_json::to_string_pretty(&json).unwrap();
-    Ok(HttpResponse::Ok().body(response))
+    Ok(HttpResponse::Ok().json(json))
 }
 
 #[derive(Error, Debug)]

@@ -1,0 +1,5 @@
+/target
+
+# Test data
+*.jpg
+*.png

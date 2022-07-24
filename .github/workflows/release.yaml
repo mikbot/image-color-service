@@ -21,4 +21,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ghcr.io/${{ github.actor }}/image-color-service:${{ github.ref_name }}
+          tags: ghcr.io/nycodeghg/image-color-service:${{ github.ref_name }}

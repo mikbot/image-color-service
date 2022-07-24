@@ -25,8 +25,18 @@ async fn color(mut body: Payload, request: HttpRequest) -> Result<HttpResponse, 
         let item = item?;
         bytes.extend_from_slice(&item);
     }
-    let format = ImageFormat::from_mime_type(request.content_type())
-        .ok_or(ColorError::InvalidImageFormat)?;
+    let format = match ImageFormat::from_mime_type(request.content_type()) {
+        Some(format) => format,
+        None => {
+            let error = match image::guess_format(&bytes) {
+                Ok(guess) => ColorError::InvalidImageFormatWithGuess {
+                    guess: guess.extensions_str().first().unwrap().to_string(),
+                },
+                Err(_) => ColorError::InvalidImageFormat,
+            };
+            return Err(error);
+        }
+    };
     let image = image::load_from_memory_with_format(&bytes, format)?;
     let img =
         color_thief::get_palette(&image.as_bytes(), color_thief::ColorFormat::Rgb, 10, 2).unwrap();
@@ -46,14 +56,16 @@ async fn color(mut body: Payload, request: HttpRequest) -> Result<HttpResponse, 
 
 #[derive(Error, Debug)]
 enum ColorError {
-    #[error("invalid image format")]
+    #[error("Invalid image format")]
     InvalidImageFormat,
-    #[error("invalid payload")]
+    #[error("Invalid image format.\nIf the image you submitted is of type {guess} set your content-type header accordingly.\nSee https://www.iana.org/assignments/media-types/media-types.xhtml#image.")]
+    InvalidImageFormatWithGuess { guess: String },
+    #[error("Invalid payload")]
     PayloadError {
         #[from]
         source: PayloadError,
     },
-    #[error("invalid image data")]
+    #[error("Invalid image data")]
     ImageError {
         #[from]
         source: ImageError,

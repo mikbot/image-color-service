@@ -3,5 +3,8 @@
     "extends": [
         "config:base"
     ],
-    "bumpVersion": "patch"
+    "bumpVersion": "patch",
+    "ignoreDeps": [
+        "mcr.microsoft.com/vscode/devcontainers/rust"
+    ]
 }

@@ -12,10 +12,14 @@ use thiserror::Error;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let port: u16 = std::env::var("PORT")
+        .map(|env| env.parse())
+        .unwrap_or(Ok(8080))
+        .unwrap();
     let server = HttpServer::new(|| App::new().service(color))
-        .bind(("0.0.0.0", 8080))?
+        .bind(("0.0.0.0", port))?
         .run();
-    println!("Listening on 0.0.0.0:8080");
+    println!("Listening on 0.0.0.0:{}", port);
     server.await
 }
 

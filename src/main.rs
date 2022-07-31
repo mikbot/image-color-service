@@ -1,6 +1,7 @@
 use actix_web::{
     error::PayloadError,
-    http::StatusCode,
+    get,
+    http::{header::ToStrError, StatusCode},
     post,
     web::{self, Payload},
     App, HttpMessage, HttpRequest, HttpResponse, HttpServer, ResponseError,
@@ -16,11 +17,21 @@ async fn main() -> std::io::Result<()> {
         .map(|env| env.parse())
         .unwrap_or(Ok(8080))
         .unwrap();
-    let server = HttpServer::new(|| App::new().service(color))
+    let server = HttpServer::new(|| App::new().service(color).service(index))
         .bind(("0.0.0.0", port))?
         .run();
-    println!("Listening on 0.0.0.0:{}", port);
+    println!("Listening on http://0.0.0.0:{}", port);
     server.await
+}
+
+#[get("/")]
+async fn index() -> HttpResponse {
+    HttpResponse::Ok().json(json!({
+        "name": env!("CARGO_PKG_NAME"),
+        "version": env!("CARGO_PKG_VERSION"),
+        "description": env!("CARGO_PKG_DESCRIPTION"),
+        "documentation": "https://mikbot.github.io/image-color-service/"
+    }))
 }
 
 #[post("/color")]

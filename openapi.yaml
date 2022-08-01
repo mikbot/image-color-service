@@ -107,4 +107,4 @@ components:
             - 9981536
           items:
             type: number
-            format: integer
+            format: int32

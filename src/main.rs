@@ -1,26 +1,38 @@
+use actix_cors::Cors;
 use actix_web::{
     error::PayloadError,
     get,
-    http::{header::ToStrError, StatusCode},
+    http::StatusCode,
     post,
     web::{self, Payload},
     App, HttpMessage, HttpRequest, HttpResponse, HttpServer, ResponseError,
 };
 use futures::StreamExt;
 use image::{ImageError, ImageFormat};
+use log::info;
 use serde_json::json;
 use thiserror::Error;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    env_logger::builder()
+        .filter_level(log::LevelFilter::Info)
+        .init();
     let port: u16 = std::env::var("PORT")
         .map(|env| env.parse())
         .unwrap_or(Ok(8080))
         .unwrap();
-    let server = HttpServer::new(|| App::new().service(color).service(index))
-        .bind(("0.0.0.0", port))?
-        .run();
-    println!("Listening on http://0.0.0.0:{}", port);
+    let server = HttpServer::new(|| {
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allow_any_method()
+            .allow_any_header()
+            .max_age(3600);
+        App::new().wrap(cors).service(color).service(index)
+    })
+    .bind(("0.0.0.0", port))?
+    .run();
+    info!("Listening on http://0.0.0.0:{}", port);
     server.await
 }
 

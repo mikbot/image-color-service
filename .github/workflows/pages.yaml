@@ -7,9 +7,10 @@ jobs:
   deploy:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-22.04
-    container: ghcr.io/redocly/redoc/cli:v2.0.0-rc.74
     steps:
       - uses: actions/checkout@v3
+      - name: Install redoc-cli
+        run: yarn global add redoc-cli
       - name: Build Docs
         run: redoc-cli build openapi.yaml -o dist/index.html
       - uses: actions/upload-pages-artifact@v1

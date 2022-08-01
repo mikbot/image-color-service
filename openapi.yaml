@@ -1,0 +1,119 @@
+openapi: 3.1.0
+info:
+  title: "image-color-service REST API"
+  version: 1.0.0
+  description: "Small microservice which calculates the most dominant colors in an image."
+  contact:
+    url: https://github.com/mikbot/image-color-service
+servers:
+  - url: https://mysterious-shelf-42238.herokuapp.com/
+paths:
+  /color:
+    post:
+      summary: Calculate color.
+      description: Calculates the most dominant color in an image.
+      operationId: get-color
+      requestBody:
+        description: The image file in binary.
+        required: true
+        content:
+          image/avif:
+            schema:
+              type: string
+              format: binary
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+          image/png:
+            schema:
+              type: string
+              format: binary
+          image/gif:
+            schema:
+              type: string
+              format: binary
+          image/webp:
+            schema:
+              type: string
+              format: binary
+          image/tiff:
+            schema:
+              type: string
+              format: binary
+          image/x-targa:
+            schema:
+              type: string
+              format: binary
+          image/x-tga:
+            schema:
+              type: string
+              format: binary
+          image/vnd-ms.dds:
+            schema:
+              type: string
+              format: binary
+          image/bmp:
+            schema:
+              type: string
+              format: binary
+          image/x-icon:
+            schema:
+              type: string
+              format: binary
+          image/vnd.radiance:
+            schema:
+              type: string
+              format: binary
+          image/x-exr:
+            schema:
+              type: string
+              format: binary
+          image/x-portable-bitmap:
+            schema:
+              type: string
+              format: binary
+          image/x-portable-graymap:
+            schema:
+              type: string
+              format: binary
+          image/x-portable-pixmap:
+            schema:
+              type: string
+              format: binary
+          image/x-portable-anymap:
+            schema:
+              type: string
+              format: binary
+      responses:
+        200:
+          description: The image has been successfully processed.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  colors:
+                    type: array
+                    example:
+                      - 16178631
+                      - 9981536
+                    items:
+                      type: number
+                      format: integer
+        400:
+          description: Invalid image body or Content-Type header is not correct.
+          content:
+            text/plain:
+              examples:
+                content-type-missing:
+                  description: |
+                    Response when content type header is missing.
+                    The application tries to guess which format you are using and displays it in the error message.
+                  value: |
+                    Invalid image format.
+                    If the image you submitted is of type jpg set your content-type header accordingly.
+                    See https://www.iana.org/assignments/media-types/media-types.xhtml#image.
+                invalid-content-type:
+                  description: Response when content type header is wrong or invalid.
+                  value: Invalid image format.

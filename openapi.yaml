@@ -19,88 +19,62 @@ paths:
         content:
           image/avif:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/jpeg:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/png:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/gif:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/webp:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/tiff:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/x-targa:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/x-tga:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/vnd-ms.dds:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/bmp:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/x-icon:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/vnd.radiance:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/x-exr:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/x-portable-bitmap:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/x-portable-graymap:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/x-portable-pixmap:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
           image/x-portable-anymap:
             schema:
-              type: string
-              format: binary
+              $ref: "#/components/schemas/ColorRequest"
       responses:
         200:
           description: The image has been successfully processed.
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  colors:
-                    type: array
-                    example:
-                      - 16178631
-                      - 9981536
-                    items:
-                      type: number
-                      format: integer
+                $ref: "#/components/schemas/ColorResponse"
         400:
           description: Invalid image body or Content-Type header is not correct.
           content:
@@ -117,3 +91,20 @@ paths:
                 invalid-content-type:
                   description: Response when content type header is wrong or invalid.
                   value: Invalid image format.
+
+components:
+  schemas:
+    ColorRequest:
+      type: string
+      format: binary
+    ColorResponse:
+      type: object
+      properties:
+        colors:
+          type: array
+          example:
+            - 16178631
+            - 9981536
+          items:
+            type: number
+            format: integer

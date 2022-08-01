@@ -15,4 +15,4 @@ jobs:
           args: 'build openapi.yaml -o dist/index.html'
       - uses: actions/upload-pages-artifact@v1
         with:
-          path: ./dist/
+          path: ./dist/index.html

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: "image-color-service REST API"
-  version: 1.0.0
+  version: 1.0.1
   description: "Small microservice which calculates the most dominant colors in an image."
   contact:
     url: https://github.com/mikbot/image-color-service
@@ -68,6 +68,23 @@ paths:
           image/x-portable-anymap:
             schema:
               $ref: "#/components/schemas/ColorRequest"
+      parameters:
+        - name: colors
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 255
+            description: The amount of colors to calculate. Defaults to 5.
+        - name: quality
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 255
+            description: The quality of the colors. Defaults to 255.
       responses:
         200:
           description: The image has been successfully processed.

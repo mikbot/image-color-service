@@ -1,10 +1,40 @@
-use actix_web::{post, web::Bytes, HttpMessage, HttpRequest, HttpResponse, error::PayloadError, ResponseError, http::StatusCode};
-use image::{ImageFormat, ImageError};
+use std::num::NonZeroU8;
+
+use actix_web::{
+    error::PayloadError,
+    http::StatusCode,
+    post,
+    web::{Bytes, Query},
+    HttpMessage, HttpRequest, HttpResponse, ResponseError,
+};
+use color_thief::Error as ColorThiefError;
+use image::{ImageError, ImageFormat};
+use serde::Deserialize;
 use serde_json::json;
 use thiserror::Error;
 
+#[derive(Deserialize)]
+pub struct Color {
+    #[serde(default = "default_colors")]
+    colors: NonZeroU8,
+    #[serde(default = "default_quality")]
+    quality: NonZeroU8,
+}
+
+fn default_colors() -> NonZeroU8 {
+    NonZeroU8::new(5).unwrap()
+}
+
+fn default_quality() -> NonZeroU8 {
+    NonZeroU8::new(255).unwrap()
+}
+
 #[post("/color")]
-pub async fn calculate_color(bytes: Bytes, request: HttpRequest) -> Result<HttpResponse, ColorError> {
+pub async fn calculate_color(
+    bytes: Bytes,
+    request: HttpRequest,
+    query: Query<Color>,
+) -> Result<HttpResponse, ColorError> {
     let format = match ImageFormat::from_mime_type(request.content_type()) {
         Some(format) => format,
         None => {
@@ -18,8 +48,12 @@ pub async fn calculate_color(bytes: Bytes, request: HttpRequest) -> Result<HttpR
         }
     };
     let image = image::load_from_memory_with_format(&bytes, format)?;
-    let img =
-        color_thief::get_palette(image.as_bytes(), color_thief::ColorFormat::Rgb, 10, 2).unwrap();
+    let img = color_thief::get_palette(
+        image.as_bytes(),
+        color_thief::ColorFormat::Rgb,
+        query.quality.get(),
+        query.colors.get(),
+    )?;
     let colors: Vec<u32> = img
         .iter()
         .map(|rgb| {
@@ -40,15 +74,11 @@ pub enum ColorError {
     #[error("Invalid image format.\nIf the image you submitted is of type {guess} set your content-type header accordingly.\nSee https://www.iana.org/assignments/media-types/media-types.xhtml#image.")]
     InvalidImageFormatWithGuess { guess: String },
     #[error("Invalid payload")]
-    PayloadError {
-        #[from]
-        source: PayloadError,
-    },
+    PayloadError(#[from] PayloadError),
     #[error("Invalid image data")]
-    ImageError {
-        #[from]
-        source: ImageError,
-    },
+    ImageError(#[from] ImageError),
+    #[error("Unable to calculate colors.")]
+    ColorThiefError(#[from] ColorThiefError),
 }
 
 impl ResponseError for ColorError {

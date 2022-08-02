@@ -74,7 +74,7 @@ paths:
           required: false
           schema:
             type: integer
-            minimum: 1
+            minimum: 2
             maximum: 255
             description: The amount of colors to calculate. Defaults to 5.
         - name: quality
@@ -83,8 +83,8 @@ paths:
           schema:
             type: integer
             minimum: 1
-            maximum: 255
-            description: The quality of the colors. Defaults to 255.
+            maximum: 10
+            description: The quality of the colors. Defaults to 10.
       responses:
         200:
           description: The image has been successfully processed.

@@ -1,5 +1,3 @@
-use std::num::NonZeroU8;
-
 use actix_web::{
     error::PayloadError,
     http::StatusCode,
@@ -13,20 +11,27 @@ use serde::Deserialize;
 use serde_json::json;
 use thiserror::Error;
 
+use self::colors::Colors;
+use self::quality::Quality;
+
+pub mod colors;
+pub mod quality;
+pub mod ranged_int;
+
 #[derive(Deserialize)]
 pub struct Color {
     #[serde(default = "default_colors")]
-    colors: NonZeroU8,
+    colors: Colors,
     #[serde(default = "default_quality")]
-    quality: NonZeroU8,
+    quality: Quality,
 }
 
-fn default_colors() -> NonZeroU8 {
-    NonZeroU8::new(5).unwrap()
+fn default_colors() -> Colors {
+    Colors::try_from(5).unwrap()
 }
 
-fn default_quality() -> NonZeroU8 {
-    NonZeroU8::new(255).unwrap()
+fn default_quality() -> Quality {
+    Quality::try_from(10).unwrap()
 }
 
 #[post("/color")]
@@ -51,8 +56,8 @@ pub async fn calculate_color(
     let img = color_thief::get_palette(
         image.as_bytes(),
         color_thief::ColorFormat::Rgb,
-        query.quality.get(),
-        query.colors.get(),
+        *query.quality.value(),
+        *query.colors.value(),
     )?;
     let colors: Vec<u32> = img
         .iter()

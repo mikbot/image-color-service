@@ -4,10 +4,9 @@ use actix_web::{
     get,
     http::StatusCode,
     post,
-    web::{self, Payload},
+    web::Bytes,
     App, HttpMessage, HttpRequest, HttpResponse, HttpServer, ResponseError,
 };
-use futures::StreamExt;
 use image::{ImageError, ImageFormat};
 use log::info;
 use serde_json::json;
@@ -47,12 +46,7 @@ async fn index() -> HttpResponse {
 }
 
 #[post("/color")]
-async fn color(mut body: Payload, request: HttpRequest) -> Result<HttpResponse, ColorError> {
-    let mut bytes = web::BytesMut::new();
-    while let Some(item) = body.next().await {
-        let item = item?;
-        bytes.extend_from_slice(&item);
-    }
+async fn color(bytes: Bytes, request: HttpRequest) -> Result<HttpResponse, ColorError> {
     let format = match ImageFormat::from_mime_type(request.content_type()) {
         Some(format) => format,
         None => {

@@ -3,3 +3,9 @@
 # Test data
 *.jpg
 *.png
+
+# Redoc Output
+/dist
+
+# IntelliJ IDEA
+/.idea

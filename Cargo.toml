@@ -10,7 +10,7 @@ description = "Small microservice which calculates the most dominant colors in a
 
 [dependencies]
 actix-web = "4"
-actix-cors = "0.6"
+actix-cors = "0.7"
 futures = "0.3"
 color-thief = "0.2"
 serde = { version = "1.0", features = ["derive"] }

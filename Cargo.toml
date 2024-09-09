@@ -1,6 +1,6 @@
 [package]
 name = "image-color-service"
-version = "0.4.9"
+version = "0.5.0"
 edition = "2021"
 authors = ["Marie Ramlow <me@nycode.dev>"]
 license = "MIT"

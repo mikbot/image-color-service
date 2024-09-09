@@ -24,6 +24,14 @@ jobs:
         with:
           target: ${{ env.TARGET }}
       - run: sudo apt update && sudo apt install musl-tools
+      - run: sudo apt-get install gcc-aarch64-linux-gnu
+        if: matrix.arch == 'arm'
+      - name: Configure linker for musl
+        if: matrix.arch == 'arm'
+        run: |
+          mkdir -p .cargo
+          echo "[target.${{ env.TARGET }}]" > .cargo/config
+          echo "linker = \"aarch64-linux-gnu-gcc\"" >> .cargo/config        
       - run: cargo build --release --target=${{ env.TARGET }}
       - uses: actions/upload-artifact@v4
         with:

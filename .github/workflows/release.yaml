@@ -8,18 +8,40 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  docker:
+  compile:
     name: Build and Publish Docker Image
     runs-on: ubuntu-latest
+    strategy:
+      matrix: 
+        arch: ["arm", "x86"]
     permissions:
       packages: write
+    env:
+      TARGET: ${{ matrix.arch == 'arm' && 'aarch64-unknown-linux-musl' || 'x86_64-unknown-linux-musl' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          target: x86_64-unknown-linux-musl
+          target: ${{ env.TARGET }}
       - run: sudo apt update && sudo apt install musl-tools
-      - run: cargo build --release --target=x86_64-unknown-linux-musl
+      - run: cargo build --release --target=${{ env.TARGET }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.arch }}
+          path: target/*-linux-musl/release/image-color-service
+  deploy:
+    runs-on: ubuntu-latest
+    needs: compile
+    steps:             
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: binary-amd64
+          path: amd64
+      - uses: actions/download-artifact@v4
+        with:
+          name: binary-arm64
+          path: arm64
       - uses: docker/setup-buildx-action@v3
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3

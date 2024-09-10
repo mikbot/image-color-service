@@ -12,6 +12,8 @@ jobs:
   compile:
     name: Build and Publish Docker Image
     runs-on: ubuntu-latest
+    container: 
+      image: ghcr.io/cross-rs/aarch64-unknown-linux-musl
     strategy:
       matrix: 
         arch: ["arm", "x86"]
@@ -24,8 +26,7 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           target: ${{ env.TARGET }}
-      - run: cargo install cross
-      - run: cross build --release --target=${{ env.TARGET }}
+      - run: cargo build --release --target=${{ env.TARGET }}
       - uses: actions/upload-artifact@v4
         with:
           name: binary-${{ matrix.arch }}
@@ -37,7 +38,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: binary-amd64
+          name: binary-x86
           path: amd64
       - uses: actions/download-artifact@v4
         with:

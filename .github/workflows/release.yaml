@@ -41,7 +41,7 @@ jobs:
           path: amd64
       - uses: actions/download-artifact@v4
         with:
-          name: binary-arm64
+          name: binary-arm
           path: arm64
       - uses: docker/setup-buildx-action@v3
       - name: Login to GitHub Container Registry

@@ -987,7 +987,7 @@ dependencies = [
 
 [[package]]
 name = "image-color-service"
-version = "0.4.6"
+version = "0.5.6"
 dependencies = [
  "actix-cors",
  "actix-web",
@@ -1643,9 +1643,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.128"
+version = "1.0.132"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ff5456707a1de34e7e37f2a6fd3d3f808c318259cbd01ab6377795054b483d8"
+checksum = "d726bfaff4b320266d395898905d0eba0345aae23b54aee3a737e260fd46db03"
 dependencies = [
  "itoa",
  "memchr",

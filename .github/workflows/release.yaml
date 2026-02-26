@@ -26,7 +26,7 @@ jobs:
           target: ${{ env.TARGET }}
       - run: cargo install cross
       - run: cross build --release --target=${{ env.TARGET }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.arch }}
           path: target/*-linux-musl/release/image-color-service
@@ -35,11 +35,11 @@ jobs:
     needs: compile
     steps:             
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: binary-x86
           path: amd64
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: binary-arm
           path: arm64

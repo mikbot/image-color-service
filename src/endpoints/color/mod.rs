@@ -16,7 +16,6 @@ use self::quality::Quality;
 
 pub mod colors;
 pub mod quality;
-pub mod ranged_int;
 
 #[derive(Deserialize)]
 pub struct Color {
